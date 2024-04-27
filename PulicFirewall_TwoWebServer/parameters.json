@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworks_RG_name": {
+            "value": null
+        },
+        "loadBalancers_dsadas_name": {
+            "value": null
+        },
+        "virtualMachines_WebServer1_name": {
+            "value": null
+        },
+        "virtualMachines_WebServer2_name": {
+            "value": null
+        },
+        "publicIPAddresses_asdasdasd_name": {
+            "value": null
+        },
+        "networkInterfaces_webserver1667_name": {
+            "value": null
+        },
+        "networkInterfaces_webserver2628_name": {
+            "value": null
+        },
+        "publicIPAddresses_WebServer1_ip_name": {
+            "value": null
+        },
+        "publicIPAddresses_WebServer2_ip_name": {
+            "value": null
+        },
+        "availabilitySets_availabilityset_name": {
+            "value": null
+        },
+        "networkSecurityGroups_WebServer1_nsg_name": {
+            "value": null
+        },
+        "networkSecurityGroups_WebServer2_nsg_name": {
+            "value": null
+        }
+    }
+}
