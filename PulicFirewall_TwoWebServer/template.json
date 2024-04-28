@@ -584,6 +584,7 @@
                 "osProfile": {
                     "computerName": "[parameters('virtualMachines_WebServer1_name')]",
                     "adminUsername": "clintondelvin",
+					"adminPassword": "C500701d$12345",
                     "windowsConfiguration": {
                         "provisionVMAgent": true,
                         "enableAutomaticUpdates": false,
@@ -595,8 +596,7 @@
                         "enableVMAgentPlatformUpdates": false
                     },
                     "secrets": [],
-                    "allowExtensionOperations": true,
-                    "requireGuestProvisionSignal": true
+                    "allowExtensionOperations": true
                 },
                 "networkProfile": {
                     "networkInterfaces": [
@@ -653,6 +653,7 @@
                 "osProfile": {
                     "computerName": "[parameters('virtualMachines_WebServer2_name')]",
                     "adminUsername": "clintondelvin",
+					"adminPassword": "C500701d$12345",
                     "windowsConfiguration": {
                         "provisionVMAgent": true,
                         "enableAutomaticUpdates": false,
@@ -664,8 +665,7 @@
                         "enableVMAgentPlatformUpdates": false
                     },
                     "secrets": [],
-                    "allowExtensionOperations": true,
-                    "requireGuestProvisionSignal": true
+                    "allowExtensionOperations": true
                 },
                 "networkProfile": {
                     "networkInterfaces": [
