@@ -573,8 +573,7 @@
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
-                            "storageAccountType": "Standard_LRS",
-                            "id": "[resourceId('Microsoft.Compute/disks', concat(parameters('virtualMachines_WebServer1_name'), '_OsDisk_1_8ceafd7c8571401286f348beb0162c32'))]"
+                            "storageAccountType": "Standard_LRS"
                         },
                         "deleteOption": "Delete",
                         "diskSizeGB": 127
@@ -643,8 +642,7 @@
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
-                            "storageAccountType": "Standard_LRS",
-                            "id": "[resourceId('Microsoft.Compute/disks', concat(parameters('virtualMachines_WebServer2_name'), '_OsDisk_1_eeb30164b4c24005b41e1f952f145824'))]"
+                            "storageAccountType": "Standard_LRS"
                         },
                         "deleteOption": "Delete",
                         "diskSizeGB": 127
