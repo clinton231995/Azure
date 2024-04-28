@@ -2,12 +2,8 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "virtualNetworks_RG_name": {
-            "defaultValue": "RG",
-            "type": "String"
-        },
-        "loadBalancers_dsadas_name": {
-            "defaultValue": "dsadas",
+        "virtualNetworks_RG_VNET_name": {
+            "defaultValue": "RG-VNET",
             "type": "String"
         },
         "virtualMachines_WebServer1_name": {
@@ -18,16 +14,20 @@
             "defaultValue": "WebServer2",
             "type": "String"
         },
-        "publicIPAddresses_asdasdasd_name": {
-            "defaultValue": "asdasdasd",
+        "publicIPAddresses_LoadBalIP_name": {
+            "defaultValue": "LoadBalIP",
             "type": "String"
         },
-        "networkInterfaces_webserver1667_name": {
-            "defaultValue": "webserver1667",
+        "availabilitySets_Webserverset_name": {
+            "defaultValue": "Webserverset",
             "type": "String"
         },
-        "networkInterfaces_webserver2628_name": {
-            "defaultValue": "webserver2628",
+        "networkInterfaces_webserver1465_name": {
+            "defaultValue": "webserver1465",
+            "type": "String"
+        },
+        "networkInterfaces_webserver2230_name": {
+            "defaultValue": "webserver2230",
             "type": "String"
         },
         "publicIPAddresses_WebServer1_ip_name": {
@@ -38,8 +38,8 @@
             "defaultValue": "WebServer2-ip",
             "type": "String"
         },
-        "availabilitySets_availabilityset_name": {
-            "defaultValue": "availabilityset",
+        "loadBalancers_PublicLoadBalancer_name": {
+            "defaultValue": "PublicLoadBalancer",
             "type": "String"
         },
         "networkSecurityGroups_WebServer1_nsg_name": {
@@ -152,7 +152,7 @@
         {
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2023-09-01",
-            "name": "[parameters('publicIPAddresses_asdasdasd_name')]",
+            "name": "[parameters('publicIPAddresses_LoadBalIP_name')]",
             "location": "northeurope",
             "sku": {
                 "name": "Standard",
@@ -164,7 +164,7 @@
                 "2"
             ],
             "properties": {
-                "ipAddress": "4.207.33.87",
+                "ipAddress": "4.209.176.80",
                 "publicIPAddressVersion": "IPv4",
                 "publicIPAllocationMethod": "Static",
                 "idleTimeoutInMinutes": 4,
@@ -184,7 +184,7 @@
                 "tier": "Regional"
             },
             "properties": {
-                "ipAddress": "52.169.10.4",
+                "ipAddress": "52.138.199.81",
                 "publicIPAddressVersion": "IPv4",
                 "publicIPAllocationMethod": "Static",
                 "idleTimeoutInMinutes": 4,
@@ -201,7 +201,7 @@
                 "tier": "Regional"
             },
             "properties": {
-                "ipAddress": "52.169.232.198",
+                "ipAddress": "52.164.122.159",
                 "publicIPAddressVersion": "IPv4",
                 "publicIPAllocationMethod": "Static",
                 "idleTimeoutInMinutes": 4,
@@ -211,12 +211,12 @@
         {
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2023-09-01",
-            "name": "[parameters('virtualNetworks_RG_name')]",
+            "name": "[parameters('virtualNetworks_RG_VNET_name')]",
             "location": "northeurope",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                        "10.0.0.0/20"
+                        "10.0.0.0/19"
                     ]
                 },
                 "encryption": {
@@ -225,11 +225,11 @@
                 },
                 "subnets": [
                     {
-                        "name": "Web-server",
-                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_RG_name'), 'Web-server')]",
+                        "name": "AppServer",
+                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_RG_VNET_name'), 'AppServer')]",
                         "properties": {
                             "addressPrefixes": [
-                                "10.0.0.0/23"
+                                "10.0.0.0/24"
                             ],
                             "delegations": [],
                             "privateEndpointNetworkPolicies": "Disabled",
@@ -238,11 +238,11 @@
                         "type": "Microsoft.Network/virtualNetworks/subnets"
                     },
                     {
-                        "name": "App-server",
-                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_RG_name'), 'App-server')]",
+                        "name": "WebServer",
+                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_RG_VNET_name'), 'WebServer')]",
                         "properties": {
                             "addressPrefixes": [
-                                "10.0.2.0/23"
+                                "10.0.1.0/24"
                             ],
                             "delegations": [],
                             "privateEndpointNetworkPolicies": "Disabled",
@@ -251,11 +251,11 @@
                         "type": "Microsoft.Network/virtualNetworks/subnets"
                     },
                     {
-                        "name": "Db-server",
-                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_RG_name'), 'Db-server')]",
+                        "name": "DBServer",
+                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_RG_VNET_name'), 'DBServer')]",
                         "properties": {
                             "addressPrefixes": [
-                                "10.0.4.0/23"
+                                "10.0.2.0/24"
                             ],
                             "delegations": [],
                             "privateEndpointNetworkPolicies": "Disabled",
@@ -271,10 +271,10 @@
         {
             "type": "Microsoft.Network/loadBalancers",
             "apiVersion": "2023-09-01",
-            "name": "[parameters('loadBalancers_dsadas_name')]",
+            "name": "[parameters('loadBalancers_PublicLoadBalancer_name')]",
             "location": "northeurope",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_asdasdasd_name'))]"
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_LoadBalIP_name'))]"
             ],
             "sku": {
                 "name": "Standard",
@@ -283,41 +283,41 @@
             "properties": {
                 "frontendIPConfigurations": [
                     {
-                        "name": "asdasd",
-                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_dsadas_name')), '/frontendIPConfigurations/asdasd')]",
+                        "name": "FrontEndIP",
+                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_PublicLoadBalancer_name')), '/frontendIPConfigurations/FrontEndIP')]",
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_asdasdasd_name'))]"
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_LoadBalIP_name'))]"
                             }
                         }
                     }
                 ],
                 "backendAddressPools": [
                     {
-                        "name": "asdasd",
-                        "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('loadBalancers_dsadas_name'), 'asdasd')]",
+                        "name": "BackEndWebServers",
+                        "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('loadBalancers_PublicLoadBalancer_name'), 'BackEndWebServers')]"/*,
                         "properties": {
                             "loadBalancerBackendAddresses": [
                                 {
-                                    "name": "RG_webserver1667ipconfig1",
+                                    "name": "RG1_webserver1465ipconfig1",
                                     "properties": {}
                                 },
                                 {
-                                    "name": "RG_webserver2628ipconfig1",
+                                    "name": "RG1_webserver2230ipconfig1",
                                     "properties": {}
                                 }
                             ]
-                        }
+                        }*/
                     }
                 ],
                 "loadBalancingRules": [
                     {
                         "name": "LoadBalancerRule1",
-                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_dsadas_name')), '/loadBalancingRules/LoadBalancerRule1')]",
+                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_PublicLoadBalancer_name')), '/loadBalancingRules/LoadBalancerRule1')]",
                         "properties": {
                             "frontendIPConfiguration": {
-                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_dsadas_name')), '/frontendIPConfigurations/asdasd')]"
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_PublicLoadBalancer_name')), '/frontendIPConfigurations/FrontEndIP')]"
                             },
                             "frontendPort": 80,
                             "backendPort": 80,
@@ -328,27 +328,27 @@
                             "loadDistribution": "Default",
                             "disableOutboundSnat": true,
                             "backendAddressPool": {
-                                "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('loadBalancers_dsadas_name'), 'asdasd')]"
+                                "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('loadBalancers_PublicLoadBalancer_name'), 'BackEndWebServers')]"
                             },
                             "backendAddressPools": [
                                 {
-                                    "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('loadBalancers_dsadas_name'), 'asdasd')]"
+                                    "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('loadBalancers_PublicLoadBalancer_name'), 'BackEndWebServers')]"
                                 }
                             ],
                             "probe": {
-                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_dsadas_name')), '/probes/Checkings')]"
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_PublicLoadBalancer_name')), '/probes/HealthCheck')]"
                             }
                         }
                     }
                 ],
                 "probes": [
                     {
-                        "name": "Checkings",
-                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_dsadas_name')), '/probes/Checkings')]",
+                        "name": "HealthCheck",
+                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_PublicLoadBalancer_name')), '/probes/HealthCheck')]",
                         "properties": {
                             "protocol": "Http",
                             "port": 80,
-                            "requestPath": "/default.htm",
+                            "requestPath": "/",
                             "intervalInSeconds": 5,
                             "numberOfProbes": 1,
                             "probeThreshold": 1
@@ -363,22 +363,22 @@
         {
             "type": "Microsoft.Network/loadBalancers/backendAddressPools",
             "apiVersion": "2023-09-01",
-            "name": "[concat(parameters('loadBalancers_dsadas_name'), '/asdasd')]",
+            "name": "[concat(parameters('loadBalancers_PublicLoadBalancer_name'), '/BackEndWebServers')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_dsadas_name'))]"
-            ],
+                "[resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_PublicLoadBalancer_name'))]"
+            ]/*,
             "properties": {
                 "loadBalancerBackendAddresses": [
                     {
-                        "name": "RG_webserver1667ipconfig1",
+                        "name": "RG1_webserver1465ipconfig1",
                         "properties": {}
                     },
                     {
-                        "name": "RG_webserver2628ipconfig1",
+                        "name": "RG1_webserver2230ipconfig1",
                         "properties": {}
                     }
                 ]
-            }
+            }*/
         },
         {
             "type": "Microsoft.Network/networkSecurityGroups/securityRules",
@@ -471,13 +471,13 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2023-09-01",
-            "name": "[concat(parameters('virtualNetworks_RG_name'), '/App-server')]",
+            "name": "[concat(parameters('virtualNetworks_RG_VNET_name'), '/AppServer')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_RG_name'))]"
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_RG_VNET_name'))]"
             ],
             "properties": {
                 "addressPrefixes": [
-                    "10.0.2.0/23"
+                    "10.0.0.0/24"
                 ],
                 "delegations": [],
                 "privateEndpointNetworkPolicies": "Disabled",
@@ -487,13 +487,13 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2023-09-01",
-            "name": "[concat(parameters('virtualNetworks_RG_name'), '/Db-server')]",
+            "name": "[concat(parameters('virtualNetworks_RG_VNET_name'), '/DBServer')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_RG_name'))]"
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_RG_VNET_name'))]"
             ],
             "properties": {
                 "addressPrefixes": [
-                    "10.0.4.0/23"
+                    "10.0.2.0/24"
                 ],
                 "delegations": [],
                 "privateEndpointNetworkPolicies": "Disabled",
@@ -503,13 +503,13 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2023-09-01",
-            "name": "[concat(parameters('virtualNetworks_RG_name'), '/Web-server')]",
+            "name": "[concat(parameters('virtualNetworks_RG_VNET_name'), '/WebServer')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_RG_name'))]"
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_RG_VNET_name'))]"
             ],
             "properties": {
                 "addressPrefixes": [
-                    "10.0.0.0/23"
+                    "10.0.1.0/24"
                 ],
                 "delegations": [],
                 "privateEndpointNetworkPolicies": "Disabled",
@@ -519,12 +519,12 @@
         {
             "type": "Microsoft.Compute/availabilitySets",
             "apiVersion": "2023-03-01",
-            "name": "[parameters('availabilitySets_availabilityset_name')]",
+            "name": "[parameters('availabilitySets_Webserverset_name')]",
             "location": "northeurope",
-            "dependsOn": [
+            /*"dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_WebServer1_name'))]",
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_WebServer2_name'))]"
-            ],
+            ],*/
             "sku": {
                 "name": "Aligned"
             },
@@ -547,15 +547,15 @@
             "name": "[parameters('virtualMachines_WebServer1_name')]",
             "location": "northeurope",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_availabilityset_name'))]",
-                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_webserver1667_name'))]"
+                "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_Webserverset_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_webserver1465_name'))]"
             ],
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "Standard_DS1_v2"
                 },
                 "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_availabilityset_name'))]"
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_Webserverset_name'))]"
                 },
                 "additionalCapabilities": {
                     "hibernationEnabled": false
@@ -569,12 +569,12 @@
                     },
                     "osDisk": {
                         "osType": "Windows",
-                        "name": "[concat(parameters('virtualMachines_WebServer1_name'), '_OsDisk_1_7f5887274b294f919a21b509a4506ee3')]",
+                        "name": "[concat(parameters('virtualMachines_WebServer1_name'), '_OsDisk_1_8ceafd7c8571401286f348beb0162c32')]",
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
                             "storageAccountType": "Standard_LRS",
-                            "id": "[resourceId('Microsoft.Compute/disks', concat(parameters('virtualMachines_WebServer1_name'), '_OsDisk_1_7f5887274b294f919a21b509a4506ee3'))]"
+                            "id": "[resourceId('Microsoft.Compute/disks', concat(parameters('virtualMachines_WebServer1_name'), '_OsDisk_1_8ceafd7c8571401286f348beb0162c32'))]"
                         },
                         "deleteOption": "Delete",
                         "diskSizeGB": 127
@@ -587,9 +587,9 @@
                     "adminUsername": "clintondelvin",
                     "windowsConfiguration": {
                         "provisionVMAgent": true,
-                        "enableAutomaticUpdates": true,
+                        "enableAutomaticUpdates": false,
                         "patchSettings": {
-                            "patchMode": "AutomaticByOS",
+                            "patchMode": "Manual",
                             "assessmentMode": "ImageDefault",
                             "enableHotpatching": false
                         },
@@ -602,7 +602,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_webserver1667_name'))]",
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_webserver1465_name'))]",
                             "properties": {
                                 "deleteOption": "Delete"
                             }
@@ -617,15 +617,15 @@
             "name": "[parameters('virtualMachines_WebServer2_name')]",
             "location": "northeurope",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_availabilityset_name'))]",
-                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_webserver2628_name'))]"
+                "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_Webserverset_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_webserver2230_name'))]"
             ],
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "Standard_DS1_v2"
                 },
                 "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_availabilityset_name'))]"
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_Webserverset_name'))]"
                 },
                 "additionalCapabilities": {
                     "hibernationEnabled": false
@@ -639,13 +639,15 @@
                     },
                     "osDisk": {
                         "osType": "Windows",
-                        "name": "[concat(parameters('virtualMachines_WebServer2_name'), '_OsDisk_1_406118bb18424c09b49f0529a6c14d29')]",
+                        "name": "[concat(parameters('virtualMachines_WebServer2_name'), '_OsDisk_1_eeb30164b4c24005b41e1f952f145824')]",
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
-                            "id": "[resourceId('Microsoft.Compute/disks', concat(parameters('virtualMachines_WebServer2_name'), '_OsDisk_1_406118bb18424c09b49f0529a6c14d29'))]"
+                            "storageAccountType": "Standard_LRS",
+                            "id": "[resourceId('Microsoft.Compute/disks', concat(parameters('virtualMachines_WebServer2_name'), '_OsDisk_1_eeb30164b4c24005b41e1f952f145824'))]"
                         },
-                        "deleteOption": "Delete"
+                        "deleteOption": "Delete",
+                        "diskSizeGB": 127
                     },
                     "dataDisks": [],
                     "diskControllerType": "SCSI"
@@ -655,9 +657,9 @@
                     "adminUsername": "clintondelvin",
                     "windowsConfiguration": {
                         "provisionVMAgent": true,
-                        "enableAutomaticUpdates": true,
+                        "enableAutomaticUpdates": false,
                         "patchSettings": {
-                            "patchMode": "AutomaticByOS",
+                            "patchMode": "Manual",
                             "assessmentMode": "ImageDefault",
                             "enableHotpatching": false
                         },
@@ -670,7 +672,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_webserver2628_name'))]",
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_webserver2230_name'))]",
                             "properties": {
                                 "deleteOption": "Delete"
                             }
@@ -682,12 +684,12 @@
         {
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2023-09-01",
-            "name": "[parameters('networkInterfaces_webserver1667_name')]",
+            "name": "[parameters('networkInterfaces_webserver1465_name')]",
             "location": "northeurope",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_WebServer1_ip_name'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_RG_name'), 'Web-server')]",
-                "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('loadBalancers_dsadas_name'), 'asdasd')]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_RG_VNET_name'), 'WebServer')]",
+                "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('loadBalancers_PublicLoadBalancer_name'), 'BackEndWebServers')]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_WebServer1_nsg_name'))]"
             ],
             "kind": "Regular",
@@ -695,12 +697,12 @@
                 "ipConfigurations": [
                     {
                         "name": "ipconfig1",
-                        "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_webserver1667_name')), '/ipConfigurations/ipconfig1')]",
-                        "etag": "W/\"e388d191-e1b4-470f-bcde-e6eb288f7ed9\"",
+                        "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_webserver1465_name')), '/ipConfigurations/ipconfig1')]",
+                        "etag": "W/\"b8bb9035-54e0-4310-bd67-32868dc646e6\"",
                         "type": "Microsoft.Network/networkInterfaces/ipConfigurations",
                         "properties": {
                             "provisioningState": "Succeeded",
-                            "privateIPAddress": "10.0.0.4",
+                            "privateIPAddress": "10.0.1.4",
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_WebServer1_ip_name'))]",
@@ -709,13 +711,13 @@
                                 }
                             },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_RG_name'), 'Web-server')]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_RG_VNET_name'), 'WebServer')]"
                             },
                             "primary": true,
                             "privateIPAddressVersion": "IPv4",
                             "loadBalancerBackendAddressPools": [
                                 {
-                                    "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('loadBalancers_dsadas_name'), 'asdasd')]"
+                                    "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('loadBalancers_PublicLoadBalancer_name'), 'BackEndWebServers')]"
                                 }
                             ]
                         }
@@ -738,12 +740,12 @@
         {
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2023-09-01",
-            "name": "[parameters('networkInterfaces_webserver2628_name')]",
+            "name": "[parameters('networkInterfaces_webserver2230_name')]",
             "location": "northeurope",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_WebServer2_ip_name'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_RG_name'), 'Web-server')]",
-                "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('loadBalancers_dsadas_name'), 'asdasd')]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_RG_VNET_name'), 'WebServer')]",
+                "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('loadBalancers_PublicLoadBalancer_name'), 'BackEndWebServers')]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_WebServer2_nsg_name'))]"
             ],
             "kind": "Regular",
@@ -751,12 +753,12 @@
                 "ipConfigurations": [
                     {
                         "name": "ipconfig1",
-                        "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_webserver2628_name')), '/ipConfigurations/ipconfig1')]",
-                        "etag": "W/\"f0053291-55a6-4353-9ba7-c871f5ee5641\"",
+                        "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_webserver2230_name')), '/ipConfigurations/ipconfig1')]",
+                        "etag": "W/\"efaef6aa-8066-4a4e-bf8e-c7ef87a3c727\"",
                         "type": "Microsoft.Network/networkInterfaces/ipConfigurations",
                         "properties": {
                             "provisioningState": "Succeeded",
-                            "privateIPAddress": "10.0.0.5",
+                            "privateIPAddress": "10.0.1.5",
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_WebServer2_ip_name'))]",
@@ -765,13 +767,13 @@
                                 }
                             },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_RG_name'), 'Web-server')]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_RG_VNET_name'), 'WebServer')]"
                             },
                             "primary": true,
                             "privateIPAddressVersion": "IPv4",
                             "loadBalancerBackendAddressPools": [
                                 {
-                                    "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('loadBalancers_dsadas_name'), 'asdasd')]"
+                                    "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('loadBalancers_PublicLoadBalancer_name'), 'BackEndWebServers')]"
                                 }
                             ]
                         }
