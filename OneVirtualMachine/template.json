@@ -184,8 +184,7 @@
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
-                            "storageAccountType": "Standard_LRS",
-                            "id": "[resourceId('Microsoft.Compute/disks', concat(parameters('virtualMachines_VirtualMachine_name'), '_OsDisk_1_26b6bad4ec114673bb88e9410c4ccc23'))]"
+                            "storageAccountType": "Standard_LRS"
                         },
                         "deleteOption": "Delete",
                         "diskSizeGB": 127
@@ -207,8 +206,7 @@
                         }
                     },
                     "secrets": [],
-                    "allowExtensionOperations": true,
-                    "requireGuestProvisionSignal": true
+                    "allowExtensionOperations": true
                 },
                 "networkProfile": {
                     "networkInterfaces": [
