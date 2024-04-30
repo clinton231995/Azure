@@ -708,6 +708,48 @@
             }
         },
         {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2021-04-01",
+            "name": "[format('{0}/{1}', parameters('virtualMachines_WebServer1_name'), 'InstallWebServer')]",
+            "location": "northeurope",
+            "dependsOn": [
+              "[format('Microsoft.Compute/virtualMachines/{0}', parameters('virtualMachines_WebServer1_name'))]"
+            ],
+            "properties": {
+              "publisher": "Microsoft.Compute",
+              "type": "CustomScriptExtension",
+              "typeHandlerVersion": "1.7",
+              "autoUpgradeMinorVersion": true,
+              "settings": {
+                "fileUris": [
+                  "https://raw.githubusercontent.com/Azure/azure-docs-json-samples/master/tutorial-vm-extension/installWebServer.ps1"
+                ],
+                "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File installWebServer.ps1"
+              }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2021-04-01",
+            "name": "[format('{0}/{1}', parameters('virtualMachines_WebServer2_name'), 'InstallWebServer')]",
+            "location": "northeurope",
+            "dependsOn": [
+              "[format('Microsoft.Compute/virtualMachines/{0}', parameters('virtualMachines_WebServer2_name'))]"
+            ],
+            "properties": {
+              "publisher": "Microsoft.Compute",
+              "type": "CustomScriptExtension",
+              "typeHandlerVersion": "1.7",
+              "autoUpgradeMinorVersion": true,
+              "settings": {
+                "fileUris": [
+                  "https://raw.githubusercontent.com/Azure/azure-docs-json-samples/master/tutorial-vm-extension/installWebServer.ps1"
+                ],
+                "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File installWebServer.ps1"
+              }
+            }
+        },                
+        {
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2023-09-01",
             "name": "[parameters('networkInterfaces_webserver2230_name')]",
