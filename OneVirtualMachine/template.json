@@ -331,7 +331,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2021-04-01",
             "name": "[format('{0}/{1}', parameters('virtualMachines_VirtualMachine_name'), 'InstallWebServer')]",
-            "location": "[parameters('location')]",
+            "location": "northeurope",
             "dependsOn": [
               "[format('Microsoft.Compute/virtualMachines', parameters('virtualMachines_VirtualMachine_name'))]"
             ],
