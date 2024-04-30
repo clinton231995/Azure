@@ -296,19 +296,7 @@
                 "backendAddressPools": [
                     {
                         "name": "BackEndWebServers",
-                        "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('loadBalancers_PublicLoadBalancer_name'), 'BackEndWebServers')]"/*,
-                        "properties": {
-                            "loadBalancerBackendAddresses": [
-                                {
-                                    "name": "RG1_webserver1465ipconfig1",
-                                    "properties": {}
-                                },
-                                {
-                                    "name": "RG1_webserver2230ipconfig1",
-                                    "properties": {}
-                                }
-                            ]
-                        }*/
+                        "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', parameters('loadBalancers_PublicLoadBalancer_name'), 'BackEndWebServers')]"
                     }
                 ],
                 "loadBalancingRules": [
@@ -366,19 +354,7 @@
             "name": "[concat(parameters('loadBalancers_PublicLoadBalancer_name'), '/BackEndWebServers')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancers_PublicLoadBalancer_name'))]"
-            ]/*,
-            "properties": {
-                "loadBalancerBackendAddresses": [
-                    {
-                        "name": "RG1_webserver1465ipconfig1",
-                        "properties": {}
-                    },
-                    {
-                        "name": "RG1_webserver2230ipconfig1",
-                        "properties": {}
-                    }
-                ]
-            }*/
+            ]
         },
         {
             "type": "Microsoft.Network/networkSecurityGroups/securityRules",
@@ -521,10 +497,6 @@
             "apiVersion": "2023-03-01",
             "name": "[parameters('availabilitySets_Webserverset_name')]",
             "location": "northeurope",
-            /*"dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_WebServer1_name'))]",
-                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_WebServer2_name'))]"
-            ],*/
             "sku": {
                 "name": "Aligned"
             },
