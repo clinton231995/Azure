@@ -333,7 +333,7 @@
             "name": "[format('{0}/{1}', parameters('virtualMachines_VirtualMachine_name'), 'InstallWebServer')]",
             "location": "northeurope",
             "dependsOn": [
-              "[format('Microsoft.Compute/virtualMachines', parameters('virtualMachines_VirtualMachine_name'))]"
+              "[format('Microsoft.Compute/virtualMachines/{0}', parameters('virtualMachines_VirtualMachine_name'))]"
             ],
             "properties": {
               "publisher": "Microsoft.Compute",
